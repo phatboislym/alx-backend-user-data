@@ -8,6 +8,7 @@ contains:
     function `get_db`
 """
 
+from datetime import datetime
 import logging
 import mysql.connector
 from os import environ
@@ -74,6 +75,7 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """
+    returns a connector to the database
     args:   None
     return: connector: mysql.connector.connection.MySQLConnection
     """
@@ -85,3 +87,42 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
     connector = mysql.connector.connect(user=username, password=password,
                                         host=host, database=database)
     return (connector)
+
+
+def main() -> None:
+    """
+    obtains a database connection using `get_db`
+        and retrieve all rows in the users table and display
+        each row under a filtered format
+    args:   None
+    return: None
+    """
+    logger: logging.Logger = get_logger()
+    connection = get_db()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM users;')
+    fields = ['name', 'email', 'phone', 'ssn',
+              'password', 'ip', 'last_login', 'user_agent']
+    filtered_fields = ['name', 'email', 'phone', 'ssn', 'password']
+    for row in cursor:
+        data = dict(zip(fields, row))
+        filtered_data = {
+            key: '***' if key in filtered_fields else values
+            for key, values in data.items()}
+        # x = "name=%(name)s; email=%(email)s; phone=%(phone)s; ssn=%(ssn)s;"\
+        #     "password=%(password)s; ip=%(ip)s; last_login=%(last_login)s;"\
+        #     "user_agent=%(user_agent)s;"
+        # logger.info(x, filtered_data)
+        # logger.info('Filtered fields: %s', ', '.join(filtered_fields))
+
+        x = "name={name}; email={email}; phone={phone}; ssn={ssn};" \
+            "password={password}; ip={ip}; last_login={last_login};" \
+            "user_agent={user_agent};"
+        logger.info(x.format(**filtered_data))
+        logger.info('Filtered fields: %s', ', '.join(filtered_fields))
+    cursor.close()
+    connection.close()
+
+
+if __name__ == '__main__':
+    main()
