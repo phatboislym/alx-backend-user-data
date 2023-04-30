@@ -5,7 +5,7 @@ contains:
     function `hash_password`
 """
 
-from bcrypt import gensalt, hashpw
+import bcrypt
 
 
 def hash_password(password: str) -> bytes:
@@ -14,6 +14,6 @@ def hash_password(password: str) -> bytes:
     return: hashed: bytes
     """
     password_bytes: bytes = password.encode('utf-8')
-    salt = gensalt()
-    hashed: bytes = hashpw(password_bytes, salt)
+    salt = bcrypt.gensalt()
+    hashed: bytes = bcrypt.hashpw(password_bytes, salt)
     return (hashed)
