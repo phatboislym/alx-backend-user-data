@@ -7,5 +7,5 @@
 - [2. Create logger](filtered_logger.py)
 - [3. Connect to secure database](filtered_logger.py)
 - [4. Read and filter data](filtered_logger.py)
-- [5. Encrypting passwords](filtered_logger.py)
-- [6. Check valid password](filtered_logger.py)
+- [5. Encrypting passwords](encrypt_password.py)
+- [6. Check valid password](encrypt_password.py)
