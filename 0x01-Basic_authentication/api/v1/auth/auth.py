@@ -28,9 +28,18 @@ class Auth():
         checks if authentication is required for a given path
         args:   path: str
                 excluded_paths: List[str]
-        return: True|False: bool
+        return: requires_auth: bool
         """
-        return False
+        requires_auth = True
+        if (path is None):
+            return (requires_auth)
+        elif (len(excluded_paths) == 0):
+            return (requires_auth)
+        elif ((path not in excluded_paths) and
+              (path.strip('/') not in excluded_paths)):
+            return (requires_auth)
+        requires_auth = False
+        return (requires_auth)
 
     def authorization_header(self, request=None) -> str:
         """
