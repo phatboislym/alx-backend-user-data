@@ -25,10 +25,20 @@ def not_found(error) -> str:
 def unauthorized(error) -> str:
     """
     function return a JSON response with status code 401 (Unauthorized)
-    args:   error: int
+    args:   error: str
     return: response: str
     """
     return jsonify({"error": "Unauthorized"}), 401
+
+
+@app.errorhandler(403)
+def forbidden(error) -> str:
+    """
+    function return a JSON response with status code 403 (forbidden)
+    args:   error: str
+    return: response: str
+    """
+    return jsonify({"error": "Forbidden"}), 403
 
 
 if __name__ == "__main__":
