@@ -35,16 +35,16 @@ class Auth():
             return (requires_auth)
         elif (len(excluded_paths) == 0):
             return (requires_auth)
-        elif ((path not in excluded_paths) and
-              (path.strip('/') not in excluded_paths)):
-            return (requires_auth)
         else:
-            for excluded_path in excluded_paths:
-                if path.startswith(excluded_path):
-                    requires_auth = False
-                    return (requires_auth)
-                else:
-                    return (requires_auth)
+            excluded_paths_2: List[str] = [excluded_path.strip('/')
+                                           for excluded_path in excluded_paths]
+            if (path.strip('/') not in excluded_paths_2):
+                return (requires_auth)
+            else:
+                for excluded_path in excluded_paths_2:
+                    if path.startswith(excluded_path):
+                        requires_auth = False
+                        return (requires_auth)
         requires_auth = False
         return (requires_auth)
 
