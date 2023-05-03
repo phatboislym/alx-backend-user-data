@@ -6,7 +6,7 @@ contains:
     class `Auth`
 """
 
-from flask import request
+# from flask import request
 from typing import List, TypeVar
 
 
@@ -31,13 +31,20 @@ class Auth():
         return: requires_auth: bool
         """
         requires_auth = True
-        if (path is None):
+        if ((path is None) or (excluded_paths is None)):
             return (requires_auth)
         elif (len(excluded_paths) == 0):
             return (requires_auth)
         elif ((path not in excluded_paths) and
               (path.strip('/') not in excluded_paths)):
             return (requires_auth)
+        else:
+            for excluded_path in excluded_paths:
+                if path.startswith(excluded_path):
+                    requires_auth = False
+                    return (requires_auth)
+                else:
+                    return (requires_auth)
         requires_auth = False
         return (requires_auth)
 
@@ -56,3 +63,14 @@ class Auth():
         return: User: TypeVar('User')
         """
         return None
+
+
+a = Auth()
+
+print(a.require_auth(None, None))
+print(a.require_auth(None, []))
+print(a.require_auth("/api/v1/status/", []))
+print(a.require_auth("/api/v1/status/", ["/api/v1/status/"]))
+print(a.require_auth("/api/v1/status", ["/api/v1/status/"]))
+print(a.require_auth("/api/v1/users", ["/api/v1/status/"]))
+print(a.require_auth("/api/v1/users", ["/api/v1/status/", "/api/v1/stats"]))
