@@ -6,8 +6,8 @@ contains:
     class `Auth`
 """
 
-# from flask import request
-from typing import List, TypeVar
+from flask import request
+from typing import List, Optional, TypeVar
 
 
 class Auth():
@@ -48,13 +48,19 @@ class Auth():
         requires_auth = False
         return (requires_auth)
 
-    def authorization_header(self, request=None) -> str:
+    def authorization_header(self, request=None) -> Optional[str]:
         """
         gets the value of the authorization header from a Flask request object
         args:   request: flask.Request, optional
         return: header: str|None
         """
-        return None
+        if (request is None):
+            return None
+        elif ('Authorization' not in request.headers):
+            return None
+        else:
+            authorization: str = request.headers.get('Authorization')
+            return (authorization)
 
     def current_user(self, request=None) -> TypeVar('User'):
         """
