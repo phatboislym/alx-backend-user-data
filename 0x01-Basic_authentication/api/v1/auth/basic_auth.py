@@ -104,11 +104,11 @@ class BasicAuth(Auth):
             token: dict = {"email": user_email}
             try:
                 users: list = User.search(token)
-                if (len(users) == 0):
+                if not users:
                     return None
                 for user in users:
                     if user.is_valid_password(user_pwd):
                         return (user)
-                return None
             except (AttributeError, TypeError):
                 return None
+        return None
