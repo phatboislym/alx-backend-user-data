@@ -20,7 +20,8 @@ class BasicAuth(Auth):
     def __init__(self) -> None:
         pass
 
-    def extract_base64_authorization_header(self, authorization_header: str) -> Optional[str]:
+    def extract_base64_authorization_header(self,
+                                            authorization_header: str) -> str:
         """
         returns the Base64 part of the Authorization header
         args:   self
