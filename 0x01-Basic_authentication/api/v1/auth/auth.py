@@ -9,6 +9,8 @@ contains:
 from flask import request
 from typing import List, Optional, TypeVar
 
+User = TypeVar('User')
+
 
 class Auth():
     """
@@ -56,13 +58,13 @@ class Auth():
         """
         if (request is None):
             return None
-        elif ('Authorization' not in request.headers):
-            return None
-        else:
+        elif ('Authorization' in request.headers):
             authorization: str = request.headers.get('Authorization')
             return (authorization)
+        else:
+            return None
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(self, request=None) -> User:
         """
         gets the current user from a Flask request object
         args:   request: flask.Request, optional
