@@ -8,7 +8,7 @@ contains:
 from api.v1.auth.auth import Auth
 import base64
 import binascii
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class BasicAuth(Auth):
@@ -17,6 +17,8 @@ class BasicAuth(Auth):
     inherits from class Auth
     methods:
         class constructor
+        extract_base64_authorization_header
+        decode_base64_authorization_header
     """
 
     def __init__(self) -> None:
@@ -58,3 +60,25 @@ class BasicAuth(Auth):
             return (base64_value)
         except (binascii.Error, UnicodeDecodeError):
             return None
+
+    def extract_user_credentials(
+            self, decoded_base64_authorization_header: str) -> Tuple[str, str]:
+        """
+        returns the user email and password from the Base64 decoded value
+        args:   self
+                decoded_base64_authorization_header: str
+        return: credentials: Tuple[str, str] | defualt: Tuple[None, None]
+        """
+        credentials: Tuple[str, str] = ("", "")
+        default: tuple = (None, None)
+        if (decoded_base64_authorization_header is None):
+            return (default)
+        elif (not isinstance(decoded_base64_authorization_header, str)):
+            return (default)
+        else:
+            split = decoded_base64_authorization_header.split(":")
+            if (len(split) != 2):
+                return (default)
+            elif (len(split) == 2):
+                credentials = tuple(split)
+            return (credentials)
