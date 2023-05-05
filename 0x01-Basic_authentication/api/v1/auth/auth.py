@@ -64,10 +64,15 @@ class Auth():
         else:
             return None
 
-    def current_user(self, request=None) -> User:
+    def current_user(self, request=None) -> Optional[User]:
         """
         gets the current user from a Flask request object
         args:   request: flask.Request, optional
-        return: User: TypeVar('User')
+        return: user: TypeVar('User')
         """
-        return None
+        if request is None:
+            return None
+        user: User = request.headers.get('user')
+        if user is None:
+            return None
+        return (user)
