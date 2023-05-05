@@ -16,4 +16,5 @@ class BasicAuth(Auth):
         class constructor
     """
 
-    pass
+    def __init__(self) -> None:
+        pass
