@@ -8,7 +8,11 @@ contains:
 from api.v1.auth.auth import Auth
 import base64
 import binascii
-from typing import Optional, Tuple
+from models.user import User
+from typing import Optional, Tuple, TypeVar
+
+
+User = TypeVar("User")
 
 
 class BasicAuth(Auth):
@@ -82,3 +86,29 @@ class BasicAuth(Auth):
             elif (len(split) == 2):
                 credentials = tuple(split)
             return (credentials)
+
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> Optional[User]:
+        """
+        returns the User instance based on his email and password
+        args:   self
+                user_email: str
+                user_pwd: str
+        return: user: User
+        """
+        if (user_email is None) or (not isinstance(user_email, str)):
+            return None
+        elif (user_pwd is None) or (not isinstance(user_pwd, str)):
+            return None
+        else:
+            token: dict = {"email": user_email}
+            try:
+                users: list = User.search(token)
+                if (len(users) == 0):
+                    return None
+                for user in users:
+                    if user.is_valid_password(user_pwd):
+                        return (user)
+                return None
+            except (AttributeError, TypeError):
+                return None
