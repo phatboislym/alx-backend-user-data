@@ -6,8 +6,8 @@ contains:
     class `BasicAuth`
 """
 from api.v1.auth.auth import Auth
-from base64 import b64decode
-from binascii import Error as BinAsciiError
+import base64
+import binascii
 from typing import Optional
 
 
@@ -50,11 +50,11 @@ class BasicAuth(Auth):
         """
         base64_value: Optional[str] = None
         base64_header = base64_authorization_header
-        if ((base64_header is None) or (type(base64_header) != str)):
+        if (base64_header is None) or (type(base64_header) != str):
             return (base64_value)
         try:
-            base64_bytes: bytes = b64decode(base64_header)
+            base64_bytes: bytes = base64.b64decode(base64_header)
             base64_value = base64_bytes.decode('utf-8')
             return (base64_value)
-        except (BinAsciiError, UnicodeDecodeError):
+        except (binascii.Error, UnicodeDecodeError):
             return None
