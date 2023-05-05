@@ -32,7 +32,7 @@ class BasicAuth(Auth):
         """
         base64_header: Optional[str] = None
         auth_header = authorization_header
-        if ((auth_header is None) or (type(auth_header) != str)):
+        if (auth_header is None) or (type(auth_header) != str):
             return (base64_header)
         elif authorization_header.startswith("Basic "):
             base64_header = authorization_header[6:]
