@@ -9,6 +9,7 @@ contains:
 from flask import request
 from typing import List, Optional, TypeVar
 
+
 User = TypeVar('User')
 
 
@@ -32,23 +33,20 @@ class Auth():
                 excluded_paths: List[str]
         return: requires_auth: bool
         """
-        requires_auth = True
-        if ((path is None) or (excluded_paths is None)):
-            return (requires_auth)
-        elif (len(excluded_paths) == 0):
-            return (requires_auth)
+        if path is None or excluded_paths is None:
+            return True
+        elif not excluded_paths:
+            return True
         else:
             excluded_paths_2: List[str] = [excluded_path.strip('/')
                                            for excluded_path in excluded_paths]
-            if (path.strip('/') not in excluded_paths_2):
-                return (requires_auth)
+            if path.strip('/') not in excluded_paths_2:
+                return True
             else:
                 for excluded_path in excluded_paths_2:
                     if path.startswith(excluded_path):
-                        requires_auth = False
-                        return (requires_auth)
-        requires_auth = False
-        return (requires_auth)
+                        return False
+        return False
 
     def authorization_header(self, request=None) -> Optional[str]:
         """
@@ -56,9 +54,9 @@ class Auth():
         args:   request: flask.Request, optional
         return: header: str|None
         """
-        if (request is None):
+        if request is None:
             return None
-        elif ('Authorization' in request.headers):
+        elif 'Authorization' in request.headers:
             authorization: str = request.headers.get('Authorization')
             return (authorization)
         else:
