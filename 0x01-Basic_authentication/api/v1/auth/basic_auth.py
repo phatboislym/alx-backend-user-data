@@ -23,6 +23,8 @@ class BasicAuth(Auth):
         class constructor
         extract_base64_authorization_header
         decode_base64_authorization_header
+        user_object_from_credentials
+        current_user
     """
 
     def __init__(self) -> None:
@@ -34,7 +36,7 @@ class BasicAuth(Auth):
         returns the Base64 part of the Authorization header
         args:   self
                 authorization_header: str
-        return: Optional[str]
+        return: base64_header: str, optional
         """
         base64_header: Optional[str] = None
         auth_header = authorization_header
@@ -52,7 +54,7 @@ class BasicAuth(Auth):
         returns the decoded value of a base64_authorization_header string
         args:   self
                 base64_authorization_header
-        return: Optional[str]
+        return: base64_value: str, optional
         """
         base64_value: Optional[str] = None
         base64_header = base64_authorization_header
@@ -94,7 +96,7 @@ class BasicAuth(Auth):
         args:   self
                 user_email: str
                 user_pwd: str
-        return: user: User
+        return: user: User, optional
         """
         if (user_email is None) or (not isinstance(user_email, str)):
             return None
@@ -112,3 +114,31 @@ class BasicAuth(Auth):
             except (AttributeError, TypeError):
                 return None
         return None
+
+    def current_user(self, request=None) -> Optional[User]:
+        """
+        overloads Auth and retrieves the User instance for a request
+        args:   self
+                request: Flask.request, optional
+        return: User, optional
+        """
+        try:
+            auth_header = self.authorization_header(request)
+            if auth_header is None:
+                return None
+            base_64_header = self.extract_base64_authorization_header(
+                auth_header)
+            if base_64_header is None:
+                return None
+            decoded_header = self.decode_base64_authorization_header(
+                base_64_header)
+            if decoded_header is None:
+                return None
+            credentials = list(self.extract_user_credentials(decoded_header))
+            if len(credentials) != 2:
+                return None
+            email, password = credentials
+            user = self.user_object_from_credentials(email, password)
+            return user
+        except (AttributeError, KeyError, TypeError, ValueError):
+            return None
