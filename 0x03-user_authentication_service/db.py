@@ -4,6 +4,7 @@
 DB module
 """
 from sqlalchemy import create_engine
+from sqlalchemy.exc import InvalidRequestError, NoResultFound
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
@@ -29,7 +30,7 @@ class DB:
         """
         memoized session object
         args:   self
-        return: Session
+        return: self.__session: Session
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
@@ -47,4 +48,20 @@ class DB:
         user = User(email=email, hashed_password=hashed_password)
         self._session.add(user)
         self._session.commit()
+        return user
+
+    def find_user_by(self, **kwargs) -> User:
+        """
+        finds the first user in the database that matches the given criteria
+        args:   self
+                **kwargs: arbitrary keyword arguments for filtering the query
+        return: user: User
+        """
+        try:
+            users = self._session.query(User)
+            user: User = users.filter_by(**kwargs).one()
+        except NoResultFound:
+            raise
+        except InvalidRequestError as e:
+            raise InvalidRequestError(str(e))
         return user
