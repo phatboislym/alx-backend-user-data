@@ -7,6 +7,7 @@ module for SQLAlchemy model `User` for a database table named `users`
 from bcrypt import gensalt, hashpw
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from typing import Optional
 
 Base = declarative_base()
 
@@ -29,5 +30,10 @@ class User(Base):
     session_id = Column(String(250), nullable=True)
     reset_token = Column(String(250), nullable=True)
 
-    def __init__(self) -> None:
-        ...
+    def __init__(self, email: str, hashed_password: str,
+                 session_id: Optional[str] = None,
+                 reset_token: Optional[str] = None) -> None:
+        self.email = email
+        self.hashed_password = hashed_password
+        self.session_id = session_id
+        self.reset_token = reset_token
