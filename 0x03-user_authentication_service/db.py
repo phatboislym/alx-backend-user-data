@@ -81,5 +81,8 @@ class DB:
         """
         user: User = self.find_user_by(id=user_id)
         for key, value in kwargs.items():
-            user.__setattr__(key, value)
+            try:
+                user.__setattr__(key, value)
+            except ValueError:
+                raise
         self._session.commit()
