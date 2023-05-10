@@ -15,7 +15,6 @@ def test_route() -> Response:
     return: payload: Response
     """
     payload: Response = jsonify({"message": "Bienvenue"})
-    print(type(payload))
     return payload
 
 
