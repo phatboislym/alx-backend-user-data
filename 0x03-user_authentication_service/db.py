@@ -40,7 +40,7 @@ class DB:
 
     def add_user(self, email: str, hashed_password: str) -> User:
         """
-        adds a user to the database
+        add a user to the database
         args:   self
                 email: str
                 hashed_password: str
@@ -53,7 +53,7 @@ class DB:
 
     def find_user_by(self, **kwargs) -> User:
         """
-        finds the first user in the database that matches the given criteria
+        find the first user in the database that matches the given criteria
         args:   self
                 **kwargs: arbitrary keyword arguments for filtering the query
         return: user: User
@@ -66,3 +66,20 @@ class DB:
         except InvalidRequestError as e:
             raise InvalidRequestError(str(e))
         return user
+
+#   update the user’s attributes as passed in the method’s arguments then
+#   commit changes to the database
+# If an argument that does not correspond to a user attribute is passed, raise
+#   a ValueError
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """
+        update the user’s attributes as passed in the method’s arguments then
+            commit changes to the database
+        args:   user_id: int
+                **kwargs: dict
+        return: None
+        """
+        user: User = self.find_user_by(id=user_id)
+        for key, value in kwargs.items():
+            user.__setattr__(key, value)
+        self._session.commit()
