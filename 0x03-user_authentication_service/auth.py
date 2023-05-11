@@ -132,8 +132,8 @@ class Auth:
         """
         try:
             user: User = self._db.find_user_by(user_id=user_id)
-            user.session_id = None
-            self._db._session.commit()
+            user.__setattr__("session_id", None)
+            self._db. _session.commit()
 
             return None
         except ValueError:
