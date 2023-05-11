@@ -10,6 +10,7 @@ contains:
 
 import bcrypt
 from db import DB, NoResultFound
+from typing import Optional
 from uuid import UUID, uuid4
 from user import User
 
@@ -28,7 +29,8 @@ def _hash_password(password: str) -> bytes:
 
 def _generate_uuid() -> str:
     """
-    return a string representation of a new UUID
+    generate and return a string representation of a new UUID
+    private function only to be used within the auth module
     args:   None
     return: unique_id: str
     """
@@ -83,3 +85,22 @@ class Auth:
             return False
         except NoResultFound:
             return False
+
+    def create_session(self, email: str) -> Optional[str]:
+        """
+        takes an email string argument and returns the session ID as a string
+        args:   self
+                email: str
+        return: session_id, optional
+        """
+        try:
+            user: User = self._db.find_user_by(email=email)
+            session_id: str = _generate_uuid()
+            user.session_id = session_id
+            self._db._session.commit()
+
+            return session_id
+        except ValueError:
+            return None
+        except NoResultFound:
+            return None
