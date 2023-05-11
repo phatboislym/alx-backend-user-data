@@ -4,11 +4,13 @@
 module for auth
 contains:
     function `_hash_password`
+    function `_generate_uuid`
     class `Auth`
 """
 
 import bcrypt
 from db import DB, NoResultFound
+from uuid import UUID, uuid4
 from user import User
 
 
@@ -22,6 +24,17 @@ def _hash_password(password: str) -> bytes:
     salt: bytes = bcrypt.gensalt()
     hashed: bytes = bcrypt.hashpw(password_bytes, salt)
     return (hashed)
+
+
+def _generate_uuid() -> str:
+    """
+    return a string representation of a new UUID
+    args:   None
+    return: unique_id: str
+    """
+    _unique_id: UUID = uuid4()
+    unique_id: str = str(_unique_id)
+    return unique_id
 
 
 class Auth:
