@@ -4,8 +4,8 @@
 module for Flask app
 """
 from auth import Auth
-from flask import Flask, jsonify, request, Response
-from typing import Optional, Tuple
+from flask import abort, Flask, jsonify, make_response, request, Response
+from typing import Optional, Tuple, Union
 from user import User
 
 AUTH = Auth()
@@ -40,6 +40,21 @@ def users() -> Tuple[Response, Optional[int]]:
         user_exists: Response = jsonify(
             {"message": "email already registered"})
         return (user_exists, 400)
+
+
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
+def login() -> Union[Response, int]:
+    """"""
+    email: str = request.form.get('email')
+    password: str = request.form.get('password')
+    if AUTH.valid_login(email, password):
+        session_id: Union[str, None] = AUTH.create_session(email=email)
+        response: Response = make_response(
+            jsonify({"email": email, "message": "logged in"}))
+        response.set_cookie('session_id', session_id)
+        return response
+    else:
+        abort(401)
 
 
 if __name__ == "__main__":
