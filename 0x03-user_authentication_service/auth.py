@@ -10,7 +10,7 @@ contains:
 
 import bcrypt
 from db import DB, NoResultFound
-from typing import Optional
+from typing import Optional, Union
 from uuid import UUID, uuid4
 from user import User
 
@@ -45,6 +45,8 @@ class Auth:
     methods:    class constructor
                 register_user
                 valid_login
+                create_session
+                get_user_from_session_id
     """
 
     def __init__(self) -> None:
@@ -100,6 +102,21 @@ class Auth:
             self._db._session.commit()
 
             return session_id
+        except ValueError:
+            return None
+        except NoResultFound:
+            return None
+
+    def get_user_from_session_id(self, session_id: str) -> Union[User, None]:
+        """
+        find the user by session_id
+        args:   self
+                session_id: str
+        return: user: User | None
+        """
+        try:
+            user: User = self._db.find_user_by(session_id=session_id)
+            return user
         except ValueError:
             return None
         except NoResultFound:
