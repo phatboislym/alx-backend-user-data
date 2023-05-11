@@ -82,5 +82,22 @@ def logout() -> Union[Response, int]:
         return response
 
 
+@app.route('/profile', methods=['GET'], strict_slashes=False)
+def profile():
+    """
+    end-point to find user profile
+    args:   None
+    return: payload: Response
+            200: int
+    """
+    session_id: Union[str, None] = request.form.get('session_id')
+    try:
+        user: User = AUTH.get_user_from_session_id(session_id)
+        payload: Response = jsonify({"email": "<user email>"})
+        return (payload, 200)
+    except (NoResultFound, ValueError):
+        pass
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000", debug=True)
