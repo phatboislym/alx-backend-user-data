@@ -91,6 +91,8 @@ def profile():
             200: int
     """
     session_id: Union[str, None] = request.form.get('session_id')
+    if not session_id:
+        abort(403)
     try:
         user: User = AUTH.get_user_from_session_id(session_id)
         payload: Response = jsonify({"email": user.email})
