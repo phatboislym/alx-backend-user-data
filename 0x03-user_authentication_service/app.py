@@ -68,8 +68,9 @@ def logout() -> Union[Response, int]:
     """
     end-point to log a user out
     args:   None
+    return: response: Response | 403 abort status code
     """
-    session_id: str = request.form.get('session_id')
+    session_id: Union[str, None] = request.form.get('session_id')
     user: User = AUTH.get_user_from_session_id(session_id)
     if not user or not session_id:
         abort(403)
