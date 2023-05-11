@@ -93,10 +93,10 @@ def profile():
     session_id: Union[str, None] = request.form.get('session_id')
     try:
         user: User = AUTH.get_user_from_session_id(session_id)
-        payload: Response = jsonify({"email": "<user email>"})
+        payload: Response = jsonify({"email": user.email})
         return (payload, 200)
     except (NoResultFound, ValueError):
-        pass
+        abort(403)
 
 
 if __name__ == "__main__":
