@@ -63,7 +63,7 @@ def login() -> Union[Response, int]:
         abort(401)
 
 
-@app.route('/sessions', methods=['GET'], strict_slashes=False)
+@app.route('/sessions', methods=['DELETE'], strict_slashes=False)
 def logout() -> Union[Response, int]:
     """
     end-point to log a user out
