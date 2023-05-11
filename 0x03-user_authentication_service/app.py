@@ -77,7 +77,7 @@ def logout() -> Union[Response, int]:
     else:
         user.session_id = None
         AUTH.destroy_session(user.id)
-        response: Response = make_response(redirect(url_for('test_route')))
+        response: Response = make_response(redirect('/'))
         response.set_cookie('session_id', "", expires=0)
         return response
 
