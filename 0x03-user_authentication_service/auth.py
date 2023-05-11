@@ -29,6 +29,7 @@ class Auth:
     Auth class to interact with the authentication database
     methods:    class constructor
                 register_user
+                valid_login
     """
 
     def __init__(self) -> None:
@@ -50,3 +51,22 @@ class Auth:
             user: User = self._db.add_user(
                 email=email, hashed_password=hashed_password)
             return user
+
+    def valid_login(self, email: str, password: str) -> bool:
+        """
+        locate the user by email
+        if it exists, check the password with bcrypt.checkpw
+        args:   self
+                email: str
+                password: str
+        return: True | False: bool
+        """
+        try:
+            user: User = self._db.find_user_by(email=email)
+            password_bytes: bytes = password.encode('utf-8')
+            valid: bool = bcrypt.checkpw(password_bytes, user.hashed_password)
+            return valid
+        except ValueError:
+            return False
+        except NoResultFound:
+            return False
