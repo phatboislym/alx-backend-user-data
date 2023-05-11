@@ -5,9 +5,9 @@ module for Flask app
 """
 from user import User
 from typing import Optional, Tuple, Union
-from auth import Auth
+from auth import Auth, NoResultFound
 from flask import (abort, Flask, jsonify, make_response,
-                   redirect, request, Response)
+                   redirect, request, Response, url_for)
 
 
 AUTH = Auth()
@@ -73,6 +73,10 @@ def logout():
     try:
         user: User = AUTH.get_user_from_session_id(session_id)
         user.session_id = None
+        AUTH.destroy_session(user, user.id)
+        AUTH._db._session.commit()
+        response: Response = make_response()
+        response.set_cookie('session_id', None)
         return redirect(url_for('test_route'))
     except NoResultFound:
         abort(403)
