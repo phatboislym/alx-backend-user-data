@@ -70,16 +70,16 @@ def logout() -> Union[Response, int]:
     args:   None
     return: response: Response | 403 abort status code
     """
-    try:
-        session_id: Union[str, None] = request.form.get('session_id')
-        user: User = AUTH.get_user_from_session_id(session_id)
+    session_id: Union[str, None] = request.form.get('session_id')
+    user: User = AUTH.get_user_from_session_id(session_id)
+    if not user or not session_id:
+        abort(403)
+    else:
         user.session_id = None
         AUTH.destroy_session(user.id)
         response: Response = make_response(redirect(url_for('test_route')))
         response.set_cookie('session_id', "", expires=0)
         return response
-    except (NoResultFound, ValueError):
-        abort(403)
 
 
 if __name__ == "__main__":
