@@ -64,27 +64,22 @@ def login() -> Union[Response, int]:
 
 
 @app.route('/sessions', methods=['GET'], strict_slashes=False)
-def logout():
+def logout() -> Union[Response, int]:
     """
     end-point to log a user out
     args:   None
     """
     session_id: str = request.form.get('session_id')
-    try:
-        user: User = AUTH.get_user_from_session_id(session_id)
-        if not user or not session_id:
-            abort(403)
-        else:
-            user.session_id = None
-            AUTH.destroy_session(user.id)
-            AUTH._db._session.commit()
-            response: Response = make_response(redirect(url_for('test_route')))
-            response.set_cookie('session_id', "", expires=0)
-            return response
-    except NoResultFound:
+    user: User = AUTH.get_user_from_session_id(session_id)
+    if not user or not session_id:
         abort(403)
     else:
-        abort(403)
+        user.session_id = None
+        AUTH.destroy_session(user.id)
+        AUTH._db._session.commit()
+        response: Response = make_response(redirect(url_for('test_route')))
+        response.set_cookie('session_id', "", expires=0)
+        return response
 
 
 if __name__ == "__main__":
