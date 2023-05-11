@@ -3,10 +3,12 @@
 """
 module for Flask app
 """
-from auth import Auth
-from flask import abort, Flask, jsonify, make_response, request, Response
-from typing import Optional, Tuple, Union
 from user import User
+from typing import Optional, Tuple, Union
+from auth import Auth
+from flask import (abort, Flask, jsonify, make_response,
+                   redirect, request, Response)
+
 
 AUTH = Auth()
 app = Flask(__name__)
@@ -44,7 +46,11 @@ def users() -> Tuple[Response, Optional[int]]:
 
 @app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> Union[Response, int]:
-    """"""
+    """
+    end-point to log a user in
+    args:   None
+    return: response: Response | 401 abort status code
+    """
     email: str = request.form.get('email')
     password: str = request.form.get('password')
     if AUTH.valid_login(email, password):
@@ -55,6 +61,23 @@ def login() -> Union[Response, int]:
         return response
     else:
         abort(401)
+
+
+@app.route('/sessions', methods=['GET'], strict_slashes=False)
+def logout():
+    """
+    end-point to log a user out
+    args:   None
+    """
+    session_id: str = request.form.get('session_id')
+    try:
+        user: User = AUTH.get_user_from_session_id(session_id)
+        user.session_id = None
+        return redirect(url_for('test_route'))
+    except NoResultFound:
+        abort(403)
+    else:
+        abort(403)
 
 
 if __name__ == "__main__":
