@@ -80,21 +80,22 @@ def logout() -> Union[Response, int]:
     #     AUTH._db._session.commit()
     #     response: Response = make_response(redirect(url_for('test_route')))
     #     response.set_cookie('session_id', "", expires=0)
-    session_id = request.cookies.get('session_id')
+    session_id = request.form.get('session_id')
 
     try:
-        user = AUTH.get_user_from_session_id(session_id)
+        user: User = AUTH.get_user_from_session_id(session_id)
 
         if user:
+            user.session_id = None
             AUTH.destroy_session(user.id)
-            response = make_response(redirect('/'))
+            response: Response = make_response(redirect(url_for('test_route')))
             response.set_cookie('session_id', '', expires=0)
             return response
         else:
             abort(403)
 
     except NoResultFound:
-        abort(403)   # return response
+        abort(403)
 
 
 if __name__ == "__main__":
