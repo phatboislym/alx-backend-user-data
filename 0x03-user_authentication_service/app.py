@@ -72,12 +72,15 @@ def logout():
     session_id: str = request.form.get('session_id')
     try:
         user: User = AUTH.get_user_from_session_id(session_id)
-        user.session_id = None
-        AUTH.destroy_session(user, user.id)
-        AUTH._db._session.commit()
-        response: Response = make_response()
-        response.set_cookie('session_id', None)
-        return redirect(url_for('test_route'))
+        if not user or not session_id:
+            abort(403)
+        else:
+            user.session_id = None
+            AUTH.destroy_session(user.id)
+            AUTH._db._session.commit()
+            response: Response = make_response(redirect(url_for('test_route')))
+            response.set_cookie('session_id', "", expires=0)
+            return response
     except NoResultFound:
         abort(403)
     else:
