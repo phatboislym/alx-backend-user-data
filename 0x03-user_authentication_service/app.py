@@ -4,7 +4,7 @@
 module for Flask app
 """
 from auth import Auth
-from flask import Flask, jsonify, Response, request
+from flask import Flask, jsonify, request, Response
 from typing import Optional, Tuple
 from user import User
 
@@ -26,8 +26,7 @@ def test_route() -> Response:
 def users() -> Tuple[Response, Optional[int]]:
     """
     end-point to register a user
-    args:   email: str
-            password: str
+    args:   None
     return: payload: Response
     """
     email: str = request.form.get('email')
@@ -44,4 +43,4 @@ def users() -> Tuple[Response, Optional[int]]:
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port="5000", debug=True)
